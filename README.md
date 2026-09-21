@@ -1,110 +1,205 @@
-# Smart College ERP System (Cloud-Based)
+# Smart College ERP System
 
-A full-stack college ERP application with:
+A full-stack College ERP application designed to manage academic activities for Admin, Teachers, and Students.
 
-- `backend`: Laravel 13 REST API with Laravel Sanctum token authentication
-- `frontend`: React + Vite + Tailwind CSS dashboard
-- `database`: MySQL-first configuration with relational academic data models
+The system provides role-based access and separate workflows for managing departments, teachers, students, subjects, attendance, marks, assignments, notices, and fees.
 
 ## Features
 
-- Role-based authentication for Admin, Teacher, and Student
-- Admin management for departments, teachers, students, subjects, notices
-- Teacher workflows for attendance, marks, assignments, notices, student directory
-- Student portal for profile, attendance, marks, fees, assignments, notices
-- Enrollment number based student search
-- Responsive sidebar + top navbar dashboard UI
-- Database notifications for assignments and notices
+### Admin
 
-## Project Structure
+- Manage departments
+- Manage teachers
+- Manage students
+- Manage subjects
+- Manage notices
+- Manage academic data
+
+### Teacher
+
+- Manage student attendance
+- Manage marks
+- Manage assignments
+- Manage notices
+- View student directory
+
+### Student
+
+- View profile
+- View attendance
+- View marks
+- View fees
+- View assignments
+- View notices
+
+### Additional Features
+
+- Role-based authentication
+- Laravel Sanctum token authentication
+- Enrollment-number-based student search
+- Responsive dashboard interface
+- Sidebar and top navigation
+- Database notifications for assignments and notices
+- REST API architecture
+
+## Tech Stack
+
+### Frontend
+
+- React.js
+- Vite
+- JavaScript
+- Tailwind CSS
+
+### Backend
+
+- Laravel 13
+- PHP
+- Laravel Sanctum
+- REST API
+
+### Database
+
+- MySQL
+
+## System Architecture
 
 ```text
-Collage-ERP-System/
-├─ backend/    Laravel API
-├─ frontend/   React application
-└─ README.md
-```
+React + Vite + Tailwind CSS
+            │
+            │ REST API
+            ▼
+     Laravel 13 Backend
+            │
+            │ Eloquent ORM
+            ▼
+          MySQL
 
-## Demo Accounts
 
-All demo accounts use the password `password123`.
+Project Structure
+smart-college-erp/
+│
+├── backend/       # Laravel REST API
+│
+├── frontend/      # React + Vite frontend
+│
+└── README.md
+Demo Accounts
 
-- Admin: `admin@smartcollegeerp.test`
-- Teacher: `teacher.it@smartcollegeerp.test`
-- Student: `student.it.1@smartcollegeerp.test`
+The project includes seeded demo accounts for testing.
 
-## Backend Setup
+All demo accounts use:
 
-1. Open a terminal in [`backend`](/C:/Users/huzai/OneDrive/Desktop/Collage-ERP-System/backend)
-2. Install PHP dependencies:
+Password: password123
+Admin
+Email: admin@smartcollegeerp.test
+Teacher
+Email: teacher.it@smartcollegeerp.test
+Student
+Email: student.it.1@smartcollegeerp.test
 
-```bash
+These credentials are intended only for local/demo use.
+
+Backend Setup
+1. Navigate to the backend
+cd backend
+2. Install PHP dependencies
 composer install
-```
+3. Create the environment file
 
-3. Copy environment config:
+Windows:
 
-```bash
 copy .env.example .env
-```
 
-4. Create a MySQL database named `smart_college_erp`
-5. Update `.env` with your MySQL username and password
-6. Generate the application key:
+Linux/macOS:
 
-```bash
+cp .env.example .env
+4. Create the MySQL database
+
+Create a database named:
+
+smart_college_erp
+
+Then update the database settings in .env:
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=smart_college_erp
+DB_USERNAME=root
+DB_PASSWORD=
+
+Update the username and password according to your local MySQL configuration.
+
+5. Generate the application key
 php artisan key:generate
-```
-
-7. Run migrations and seed demo data:
-
-```bash
+6. Run migrations and seed demo data
 php artisan migrate:fresh --seed
-```
-
-8. Start the API server:
-
-```bash
+7. Start the Laravel API
 php artisan serve
-```
 
-The API will be available at `http://127.0.0.1:8000/api`.
+The API will be available at:
 
-## Frontend Setup
+http://127.0.0.1:8000
+Frontend Setup
 
-1. Open a second terminal in [`frontend`](/C:/Users/huzai/OneDrive/Desktop/Collage-ERP-System/frontend)
-2. Install Node dependencies:
+Open a second terminal.
 
-```bash
+1. Navigate to the frontend
+cd frontend
+2. Install dependencies
 npm install
-```
+3. Create the environment file
 
-3. Copy frontend environment config:
+Windows:
 
-```bash
 copy .env.example .env
-```
 
-4. Start the React app:
+Linux/macOS:
 
-```bash
+cp .env.example .env
+4. Start the React development server
 npm run dev
+
+The frontend will be available at:
+
+http://127.0.0.1:5173
+Authentication
+
+The application uses Laravel Sanctum for API authentication.
+
+After successful login, the frontend authenticates API requests using a bearer token:
+
+Authorization: Bearer <token>
+Verification
+
+The project has been tested with the following checks:
+
+Backend
+php artisan migrate:fresh --seed
+php artisan test
+Frontend
+npm run build
+Key Highlights
+Full-stack React and Laravel application
+Role-based access control
+RESTful API communication
+Token-based authentication
+Relational MySQL database
+Separate workflows for Admin, Teacher, and Student
+Responsive dashboard UI
+Academic management features including attendance and marks
+Future Improvements
+Online fee payment integration
+Advanced reporting and analytics
+PDF report generation
+Email notification integration
+Deployment with production infrastructure
+Author
+
+Talha Shaikh
+
+Junior Web Developer
+India
+
 ```
-
-The frontend will run at `http://127.0.0.1:5173`.
-
-## Verification
-
-Backend checks completed:
-
-- `php artisan migrate:fresh --seed`
-- `php artisan test`
-
-Frontend checks completed:
-
-- `npm run build`
-
-## Notes
-
-- The backend workspace `.env` in this repo may still point to SQLite from local smoke testing. Use `.env.example` as the MySQL source of truth for your actual run.
-- Sanctum is used with bearer tokens, so the React app authenticates through `Authorization: Bearer <token>`.
