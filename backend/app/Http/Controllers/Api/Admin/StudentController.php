@@ -180,7 +180,7 @@ class StudentController extends Controller
     public function import(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:xlsx,csv,txt'],
+            'file' => ['required', 'file', 'mimes:xlsx,csv,txt', 'max:10240'],
         ]);
 
         $import = new \App\Imports\StudentsImport();
@@ -211,7 +211,7 @@ class StudentController extends Controller
             'Content-Disposition' => 'attachment; filename="students_sample.csv"',
         ];
 
-        $columns = ['name', 'email', 'password', 'enrollment_no', 'department', 'semester', 'phone'];
+        $columns = ['name', 'email', 'enrollment_no', 'department', 'semester', 'phone'];
 
         $callback = function () use ($columns) {
             $file = fopen('php://output', 'w');
@@ -221,7 +221,6 @@ class StudentController extends Controller
             fputcsv($file, [
                 'John Doe',
                 'john.doe@example.com',
-                'secret123',
                 'ENR2023001',
                 'Computer Science',
                 '1',

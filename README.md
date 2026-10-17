@@ -5,7 +5,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=flat-square&logo=vite)](https://vitejs.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4.x-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
 [![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=flat-square&logo=mysql)](https://www.mysql.com)
-[![License](https://img.shields.io/badge/License-MIT-green.style=flat-square)](#license)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](#license)
 
 A modern, production-ready, full-stack **College Enterprise Resource Planning (ERP)** web application built to streamline academic administration, coursework management, student records, attendance tracking, exam scoring, assignment workflows, fee monitoring, and campus-wide notice distribution.
 
@@ -22,6 +22,11 @@ The application features a decoupled architecture with a **Laravel 13 REST API**
   - [🎓 Student Portal](#-student-portal)
   - [⚡ Platform Capabilities](#-platform-capabilities)
 - [Technology Stack](#technology-stack)
+- [Screenshots](#screenshots)
+  - [🔑 Authentication](#-authentication)
+  - [🛡️ Admin Portal](#-admin-portal-1)
+  - [👨‍🏫 Teacher Portal](#-teacher-portal-1)
+  - [🎓 Student Portal](#-student-portal-1)
 - [System Architecture](#system-architecture)
 - [Database Schema & Data Models](#database-schema--data-models)
 - [API Endpoints Reference](#api-endpoints-reference)
@@ -114,6 +119,75 @@ Educational institutions require unified platforms to manage academic workflows,
 | Component | Technology | Description |
 |---|---|---|
 | **Database Engine** | [MySQL 8.0+](https://www.mysql.com/) | Relational database management system |
+
+---
+
+## Screenshots
+
+### 🔑 Authentication
+
+#### Login Screen
+![Login](screenshots/login.png)
+
+---
+
+### 🛡️ Admin Portal
+
+#### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+#### Admin Student Management & Bulk Import
+![Admin Student Management](screenshots/admin-student-manage.png)
+
+#### Admin Faculty / Teacher Management
+![Admin Teacher Management](screenshots/admin-teacher-manage.png)
+
+#### Admin Department Management
+![Admin Department Management](screenshots/admin-department.png)
+
+#### Admin Notice Management
+![Admin Notice Management](screenshots/admin-notice.png)
+
+---
+
+### 👨‍🏫 Teacher Portal
+
+#### Teacher Dashboard
+![Teacher Dashboard](screenshots/teacher-dashboard.png)
+
+#### Attendance Management
+![Teacher Attendance Management](screenshots/teacher-attendance.png)
+
+#### Marks & Exam Scoring Management
+![Teacher Marks Management](screenshots/teacher-marks.png)
+
+#### Assignment Distribution
+![Teacher Assignment Management](screenshots/teacher-assignment.png)
+
+---
+
+### 🎓 Student Portal
+
+#### Student Dashboard
+![Student Dashboard](screenshots/student-dashboard.png)
+
+#### Attendance Tracker
+![Student Attendance Tracker](screenshots/student-attendance.png)
+
+#### Marks & Report Card
+![Student Marks](screenshots/student-marks.png)
+
+#### Assignment Hub
+![Student Assignment Hub](screenshots/student-assignment.png)
+
+#### Student Directory
+![Student Directory](screenshots/student-list.png)
+
+#### Fee Payment Status
+![Student Fee Status](screenshots/student-fees-payment-status.png)
+
+#### Campus & Department Notice Board
+![Student Notice Board](screenshots/student-notice.png)
 
 ---
 
@@ -255,7 +329,7 @@ smart-college-erp/
 │   ├── database/
 │   │   ├── factories/              # Model Factories for Seeding
 │   │   ├── migrations/             # Database Table Migrations
-│   │   └── seeders/                # DatabaseSeeder with Default Accounts
+│   │   └── seeders/                # Safe default seeder and opt-in DemoSeeder
 │   ├── routes/
 │   │   └── api.php                 # Central REST API Routing
 │   ├── tests/                      # Automated Unit & Feature Tests
@@ -395,17 +469,37 @@ Ensure your local environment meets the following requirements:
 
 ---
 
-## Demo Credentials
+## Demo Accounts
 
-The backend seeder populates default accounts for testing all three user roles.
+`php artisan db:seed` does not create users or demo data. To create synthetic demo accounts, provide three different passwords through your local environment or the hosting provider's protected environment settings, then run `php artisan db:seed --class=DemoSeeder` explicitly. Each password must be at least 20 characters. The seeder is disabled in production unless `DEMO_SEED_ENABLED=true` is set temporarily for the explicit seed operation. Set `DEMO_READ_ONLY=true` on a public recruiter instance: logins and read-only exploration remain available, while API writes return 403. Do not publish passwords in this repository or use real student, teacher, or institutional data.
 
-| Role | Email Address | Default Password | Access Level |
-|---|---|---|---|
-| 🛡️ **Admin** | `admin@example.com` | `password` | Full Administrative Access |
-| 👨‍🏫 **Teacher** | `teacher@example.com` | `password` | Faculty & Class Management |
-| 🎓 **Student** | `student@example.com` | `password` | Personal Student Portal |
+The demo seeder creates Admin, Teacher, and Student role accounts for a dedicated demo database. The demo Admin uses the regular Admin role so the Admin portal can be inspected, but public demo mode blocks all write requests; keep the database isolated from institutional records and rotate or disable the demo accounts when the demo ends. Rerunning the demo seeder resets the demo passwords and revokes their existing Sanctum tokens. `DatabaseSeeder` remains empty and safe for ordinary production seeding.
 
-> ⚠️ *Note: These credentials are seeded strictly for development and testing environments. Change them prior to deploying to production.*
+## Deployment Preparation
+
+The frontend is a static Vite build; Laravel 13 needs a PHP 8.3+ runtime and MySQL. Example templates are in `frontend/.env.production.example` and `backend/.env.production.example`. They contain placeholders only. Never commit the completed environment values.
+
+### Recommended: Cloudflare Pages + Railway
+
+- Deploy `frontend/` to Cloudflare Pages with build command `npm run build`, output directory `dist`, and build variable `VITE_API_BASE_URL=https://<backend-domain>/api`. Set the Pages project root to `frontend`. Cloudflare documents Vite's build/output settings and serves React SPA routes by default. Pages Free currently allows up to 500 builds per month; it is static hosting only, so Laravel and MySQL are separate services.
+- Deploy `backend/` from the GitHub repository as a Railway Laravel service, set its root directory to `/backend`, and use Railway's PHP/Laravel runtime detection. Add a Railway MySQL service and connect it over Railway's private network. Set `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` from Railway's MySQL variables. Do not expose the database publicly.
+- Set `APP_ENV=production`, `APP_DEBUG=false`, a securely generated `APP_KEY`, `APP_URL`, `LOG_CHANNEL=stderr`, and `CORS_ALLOWED_ORIGINS` to the exact Pages origin. Keep `DEMO_SEED_ENABLED=false` except during an explicitly approved demo seed operation. Enter demo passwords only in Railway's protected variables and do not include them in GitHub, build output, or logs.
+- Railway Hobby currently costs $5/month and includes $5/month in resource usage; additional usage is billed separately. A small always-on PHP service plus MySQL may exceed the included usage, so budget roughly $10–$20/month for this low-traffic demo and check the Railway usage estimator before enabling billing. This is an estimate based on two continuously running small services; actual CPU, memory, storage, and egress use can change it. Railway Free offers $1/month ongoing usage credit after its trial and has smaller service/storage limits, so it is unlikely to cover an always-on backend plus database. Railway supports MySQL and private service connectivity; configure and verify a recurring backup plan before storing anything other than disposable synthetic records.
+- The current code does not store uploaded files permanently, run queue workers, send real email, or define any valid scheduled command. Student spreadsheets are processed as transient uploads (10 MiB maximum). No scheduler service is required unless those features are added later.
+
+### Fallback: Cloudflare Pages + DigitalOcean Droplet
+
+Use Cloudflare Pages for the frontend and a 2 GiB, 1-vCPU DigitalOcean Basic Droplet for Laravel and MySQL on the same VM. The current Droplet price is $12/month; weekly system backups add 20% ($2.40/month), for about $14.40/month before tax. This puts the app and database on one failure domain, and you manage server patching, firewall, TLS, MySQL updates, monitoring, and database backups. A managed MySQL cluster starts at $15/month, in addition to the Droplet, and is less cost-effective for this demo. Use a reverse proxy such as Caddy for HTTPS and do not expose the MySQL port publicly.
+
+### Deployment sequence
+
+1. Create an isolated production database that contains no institutional records. Configure all backend secrets through the host's secure variable settings using `backend/.env.production.example` as a key checklist; generate `APP_KEY` locally with `php artisan key:generate --show` and enter it directly in the host dashboard.
+2. Deploy the backend, then take a database backup before any schema change. Review the migration list and run `php artisan migrate --force` only after approving it. Do not run `migrate:fresh` on any hosted database.
+3. Set the exact frontend origin in `CORS_ALLOWED_ORIGINS`, set `APP_URL`, and keep `APP_DEBUG=false`. Add the backend HTTPS URL as `VITE_API_BASE_URL` in the frontend host's build settings and deploy the static build.
+4. If a demo is wanted, generate three unique passwords of at least 20 characters in a password manager. Enter each in the backend provider's protected variables, temporarily enable `DEMO_SEED_ENABLED=true`, and explicitly run `php artisan db:seed --class=DemoSeeder` against the isolated demo database. Disable `DEMO_SEED_ENABLED` afterward and share account credentials through a suitable private channel, not this repository.
+5. Verify Admin, Teacher, and Student login and role isolation on the deployed service, then reset the demo database from a reviewed synthetic seed when needed. To disable public access, remove or disable the demo accounts and revoke their tokens; if a shared password was exposed, change it and revoke Sanctum tokens immediately.
+
+Current provider references: [Railway Laravel deployment](https://docs.railway.com/guides/laravel), [Railway MySQL](https://docs.railway.com/databases/mysql), [Railway pricing](https://docs.railway.com/pricing/plans), [Cloudflare Pages Vite deployment](https://developers.cloudflare.com/pages/framework-guides/deploy-a-vite3-project/), [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/), [DigitalOcean Droplet pricing](https://www.digitalocean.com/pricing/droplets), and [DigitalOcean MySQL pricing](https://docs.digitalocean.com/products/databases/mysql/details/pricing/).
 
 ---
 
@@ -417,9 +511,9 @@ Administrators can batch import students via the **Student Management** page. Th
 Your CSV file must contain the following exact column headers:
 
 ```csv
-name,email,enrollment_no,department_code,semester,phone
-John Doe,john.doe@example.com,IT2026101,IT,4,9876543210
-Jane Smith,jane.smith@example.com,CS2026102,CS,2,9876543211
+name,email,enrollment_no,department,semester,phone
+Demo Student One,student.one@example.test,IT2026101,Information Technology,4,0000000000
+Demo Student Two,student.two@example.test,CS2026102,Computer Science,2,0000000000
 ```
 
 ### Import Validation Rules

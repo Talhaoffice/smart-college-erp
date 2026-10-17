@@ -41,6 +41,14 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'demo_seed_enabled' => (bool) env('DEMO_SEED_ENABLED', false),
+
+    'demo_read_only' => (bool) env('DEMO_READ_ONLY', false),
+
+    'demo_admin_password' => env('DEMO_ADMIN_PASSWORD', ''),
+    'demo_teacher_password' => env('DEMO_TEACHER_PASSWORD', ''),
+    'demo_student_password' => env('DEMO_STUDENT_PASSWORD', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
