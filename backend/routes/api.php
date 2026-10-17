@@ -59,7 +59,9 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::post('/marks', [MarkController::class, 'store']);
 
         Route::apiResource('assignments', AssignmentController::class)->except(['show']);
-        Route::apiResource('notices', TeacherNoticeController::class)->except(['show']);
+        Route::apiResource('notices', TeacherNoticeController::class)
+            ->except(['show'])
+            ->names('teacher.notices');
     });
 
     Route::prefix('student')->middleware('role:student')->group(function (): void {
